@@ -21,11 +21,14 @@ public:
         this->price = price;
     }
     void showData(){
-        cout << "Optic type: " << opticType << endl;
-        cout << "thickness: " << thickness<< endl;
-        cout << "material: " << material << endl;
-        cout << "diopter: " << diopter << endl;
-        cout << "price: " << price << endl;
+        cout << '\t' << "Optic type: " << opticType << endl;
+        cout << '\t' << "thickness: " << thickness<< endl;
+        cout << '\t' << "material: " << material << endl;
+        cout << '\t' << "diopter: " << diopter << endl;
+        cout << '\t' << "price: " << price << endl;
+    }
+    double getPrice(){
+        return price;
     }
 };
 class OpticFactory{
@@ -76,6 +79,7 @@ public:
     }
     void showOptics(){
         for(unsigned int i = 0; i < optics.size(); i++){
+            cout << i << "." << endl;
             optics[i]->showData();
             cout << endl;
         }
@@ -88,6 +92,9 @@ public:
     }
     void addOptic(Optic* newOptic){
         this->optics.push_back(newOptic);
+    }
+    vector<Optic*> getOptics(){
+        return optics;
     }
 };
 
@@ -164,6 +171,42 @@ public:
             return providers[number];
         }
     }
+    double chooseOptic(vector<Optic*> optics, int* usedOptics, int len){
+        for(int i = 0; i < len; i++){
+            if(usedOptics[i] == 0){
+                cout << i << ". " << endl;
+                optics[i]->showData();
+            }
+        }
+        cout << endl;
+        cout << "choose optic" << endl;
+        int choise = 0;
+        cin >> choise;
+        usedOptics[choise] = 0;
+        return optics[choise]->getPrice();
+    }
+    void buyOptics(){
+        Provider* provider = getProviderByIndex();
+        vector<Optic*> optics = provider->getOptics();
+        int totalOpticsCount = provider->getOptics().size();
+        double totalSumForPaying = 0;
+
+        int usedOptics[totalOpticsCount];
+        for(int i = 0; i < totalOpticsCount; i++){
+            usedOptics[i] = 0;
+        }
+        while(1){
+            int choise = 0;
+            cout << "Do you want to choose optic for buying?" << endl;
+            cout << "1 -> YES         2 -> NO" << endl;
+            if(choise != 1){
+                break;
+            } else {
+                totalSumForPaying += chooseOptic(optics,usedOptics,totalOpticsCount);
+            }
+        }
+        cout << "Total sum: " << totalSumForPaying << endl;
+    }
 
     void startApp(){
         int choise = 0;
@@ -175,6 +218,8 @@ public:
             } else if(choise == 1){
                 this->addProvider();
             } else if(choise == 2){
+
+
                 Provider* choisenProvider = this->getProviderByIndex();
                 addOpticToProvider(choisenProvider);
                 cout << "End of adding optic to provider" << endl;
@@ -183,6 +228,7 @@ public:
             } else if(choise == 4){
 
             } else if(choise == 5){
+               this->buyOptics();
 
             } else if(choise == 6){
                 this->showProviders();
