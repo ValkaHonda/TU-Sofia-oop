@@ -13,29 +13,37 @@ private:
     double price;
 public:
     Optic();
-    Optic(string opticType,string thickness,string material,double diopter,double price){
+    Optic(string,string,string,double ,double);
+    void showData();
+    double getPrice();
+};
+Optic::Optic(string opticType,string thickness,string material,double diopter,double price){
         this->opticType = opticType;
         this->thickness = thickness;
         this->material = material;
         this->diopter = diopter;
         this->price = price;
-    }
-    void showData(){
+}
+void Optic::showData(){
         cout << '\t' << "Optic type: " << opticType << endl;
         cout << '\t' << "thickness: " << thickness<< endl;
         cout << '\t' << "material: " << material << endl;
         cout << '\t' << "diopter: " << diopter << endl;
         cout << '\t' << "price: " << price << endl;
     }
-    double getPrice(){
-        return price;
-    }
-};
+double Optic::getPrice(){
+    return price;
+}
+
 class OpticFactory{
 private:
 public:
-    OpticFactory(){ }
-    Optic* CreateOptic(){
+    OpticFactory();
+    Optic CreateOptic();
+};
+OpticFactory::OpticFactory(){}
+
+Optic OpticFactory::CreateOptic(){
         string opticType;
         cout << "Enter the type of Optic" << endl;
         cin >> opticType;
@@ -55,9 +63,9 @@ public:
         double price;
         cout << "Enter the price of Optic" << endl;
         cin >> price;
-        return new Optic(opticType,thickness,material,diopter,price);
+        Optic optic(opticType,thickness,material,diopter,price);
+        return optic;
     }
-};
 
 class Provider{
 private:
@@ -68,35 +76,62 @@ private:
     string address;
     vector<Optic*> optics;
 public:
-    Provider(){
-    }
-    Provider(string bulstat,string fName,string lName,string phone,string address){
-        this->bulstat = bulstat;
-        this->fName = fName;
-        this->lName = lName;
-        this->phone = phone;
-        this->address = address;
-    }
-    void showOptics(){
+    Provider();
+    Provider(string,string,string ,string ,string);
+    void showOptics();
+    void showData();
+    void addOptic(Optic* newOptic);
+    vector<Optic*> getOptics();
+};
+
+
+
+Provider::Provider(){ }
+Provider::Provider(string bulstat,string fName,string lName,string phone,string address){
+    this->bulstat = bulstat;
+    this->fName = fName;
+    this->lName = lName;
+    this->phone = phone;
+    this->address = address;
+}
+    void Provider::showOptics(){
         for(unsigned int i = 0; i < optics.size(); i++){
             cout << i << "." << endl;
             optics[i]->showData();
             cout << endl;
         }
     }
-    void showData(){
+    void Provider::showData(){
         cout << "First name: " << this->fName << endl;
         cout << "Last name: " << this->lName << endl;
         cout << "Optics:" << endl;
         showOptics();
     }
-    void addOptic(Optic* newOptic){
+    void Provider::addOptic(Optic* newOptic){
         this->optics.push_back(newOptic);
     }
-    vector<Optic*> getOptics(){
+    vector<Optic*> Provider::getOptics(){
         return optics;
     }
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class ProviderFactory{
 private:
@@ -149,10 +184,12 @@ public:
         Provider* currentProvider = providerFactory->createProvider();
         providers.push_back(currentProvider);
     }
+    /*
     void addOpticToProvider(Provider* provider){
         Optic* currentOptic = this->opticFactory->CreateOptic();
         provider->addOptic(currentOptic);
     }
+    */
     void showProviders(){
         for(unsigned int i = 0; i < providers.size(); i++){
             Provider* currentProvider = providers[i];
@@ -220,9 +257,10 @@ public:
             } else if(choise == 2){
 
 
-                Provider* choisenProvider = this->getProviderByIndex();
+      /*          Provider* choisenProvider = this->getProviderByIndex();
                 addOpticToProvider(choisenProvider);
                 cout << "End of adding optic to provider" << endl;
+                */
             } else if(choise == 3){
 
             } else if(choise == 4){

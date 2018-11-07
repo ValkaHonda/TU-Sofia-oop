@@ -38,7 +38,6 @@ void SpecificComponent::displaySpecificData() {this->displayData();
 string ElectronicComponents::getType() {return type;}
 int ElectronicComponents::getValue() {return value;}
 
-
 int main()
 {
  SpecificComponent firstComponent(1, "resistance", 7, "kiloOhm", "Russia", 0.5);
@@ -57,8 +56,5 @@ int main()
   if(components[i].getType() == "capacitor" && components[i].getValue() >= 1 && components[i].getValue() <= 2)
   {components[i].displaySpecificData();}
  }
-
-
-
 return 0;
 }
