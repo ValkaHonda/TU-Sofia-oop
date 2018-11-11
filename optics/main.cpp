@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 #include <fstream>
+#include <stdexcept>
+
 using namespace std;
 
 class Optic{
@@ -41,25 +43,34 @@ ostream& operator<<(ostream& os, const Optic& optic){
 }
 Optic::Optic(){}
 Optic::Optic(string opticType,double thickness,string material,double diopter,double price){
-        this->opticType = opticType;
-        this->thickness = thickness;
-        this->material = material;
-        this->diopter = diopter;
-        this->price = price;
+        setOpticType(opticType);
+        setThickness(thickness);
+        setMaterial(material);
+        setDiopter(diopter);
+        setPrice(price);
 }
 void Optic::setOpticType(string opticType){
     this->opticType = opticType;
 }
 void Optic::setThickness(double thickness){
+    if(thickness < 0){
+        throw invalid_argument( "received negative value for the thickness" );
+    }
     this->thickness = thickness;
 }
 void Optic::setMaterial(string material){
     this->material = material;
 }
 void Optic::setDiopter(double diopter){
+    if(diopter < 0){
+        throw invalid_argument( "received negative value for the diopter" );
+    }
     this->diopter = diopter;
 }
 void Optic::setPrice(double price){
+    if(price < 0){
+        throw invalid_argument( "received negative value for the price" );
+    }
     this->price = price;
 }
 string Optic::getOpticType(){
@@ -105,29 +116,28 @@ public:
 OpticFactory::OpticFactory(){}
 
 Optic OpticFactory::createOptic(){
-        string opticType;
-        cout << "Enter the type of Optic" << endl;
-        cin >> opticType;
+    string opticType;
+    cout << "Enter the type of Optic" << endl;
+    cin >> opticType;
 
-        double thickness;
-        cout << "Enter the thickness of Optic" << endl;
-        cin >> thickness;
+    double thickness;
+    cout << "Enter the thickness of Optic" << endl;
+    cin >> thickness;
 
-        string material;
-        cout << "Enter the material of Optic" << endl;
-        cin >> material;
+    string material;
+    cout << "Enter the material of Optic" << endl;
+    cin >> material;
 
-        double diopter;
-        cout << "Enter the diopter of Optic" << endl;
-        cin >> diopter;
+    double diopter;
+    cout << "Enter the diopter of Optic" << endl;
+    cin >> diopter;
 
-        double price;
-        cout << "Enter the price of Optic" << endl;
-        cin >> price;
-        Optic optic(opticType,thickness,material,diopter,price);
-        return optic;
-    }
-
+    double price;
+    cout << "Enter the price of Optic" << endl;
+    cin >> price;
+    Optic optic(opticType,thickness,material,diopter,price);
+    return optic;
+}
 class Provider{
 private:
     string bulstat;
@@ -161,7 +171,6 @@ string Provider::getFName() const{
 }
 ostream& operator<<(ostream& os, const Provider& provider){
     os << "First name: " << provider.getFName() << endl;
-
     os << "Last name: " << provider.getLName() << endl;
     os << "Bulstat: " << provider.getBulstat() << endl;
     os << "Phone: " << provider.getPhone() << endl;
@@ -558,13 +567,12 @@ int main()
 {
     cout << "Welcome!" << endl;
 
-    // dummy data
     ProviderFactory providerFactory;
     OpticFactory opticFactory;
     FileIO file("omegaData.txt");
-
     AppController app(providerFactory,opticFactory, file);
 
+    // dummy data
     Provider p1("bulstat1","fName1","lName1","phone1","address1");
     Provider p2("bulstat2","fName2","lName2","phone2","address2");
     Provider p3("bulstat3","fName3","lName3","phone3","address3");
@@ -625,7 +633,6 @@ int main()
             showMenu();
             cin >> choise;
         }
-
     }
     cout << "Thank you for using us" << endl;
     return 0;
