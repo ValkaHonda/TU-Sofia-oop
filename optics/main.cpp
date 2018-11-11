@@ -96,7 +96,11 @@ public:
     void addOptic(Optic newOptic);
     vector<Optic> getOptics();
     string toFileLineString();
+    void setOptics(vector<Optic>);
 };
+void Provider::setOptics(vector<Optic> optics){
+    this->optics = optics;
+}
 string Provider::toFileLineString(){
     std::stringstream ss;
     ss << bulstat << endl;
@@ -132,6 +136,9 @@ void Provider::showOptics(){
 void Provider::showData(){
     cout << "First name: " << this->fName << endl;
     cout << "Last name: " << this->lName << endl;
+    cout << "Bulstat: " << this->bulstat << endl;
+    cout << "Phone: " << this->phone << endl;
+    cout << "Address: " << this->address << endl;
     cout << "Optics:" << endl;
     showOptics();
 }
@@ -184,6 +191,90 @@ FileIO::FileIO(){}
 FileIO::FileIO(string filePath){
     path = filePath;
 }
+vector<Provider> FileIO::loadProviders(){
+    vector<Provider> providers;
+    string line;
+    ifstream myfile (path);
+
+    if (myfile.is_open()){
+        int providerFieldCounter = 0;
+        string bulstat;
+        string fName;
+        string lName;
+        string phone;
+        string address;
+
+        while ( getline (myfile,line) ){
+            if(line == "TU-End"){
+                break;
+            }
+            if(providerFieldCounter == 0){
+                bulstat = line;
+                providerFieldCounter++;
+            } else if(providerFieldCounter == 1){
+                fName = line;
+                providerFieldCounter++;
+            } else if(providerFieldCounter == 2){
+                lName = line;
+                providerFieldCounter++;
+            }else if(providerFieldCounter == 3){
+                phone = line;
+                providerFieldCounter++;
+            }else if(providerFieldCounter == 4){
+                address = line;
+                Provider newProvider(bulstat,fName,lName,phone,address);
+                providerFieldCounter++;
+                providers.push_back(newProvider);
+            }else {
+                if(line == "-->"){
+                    string opticType;
+                    string thickness;
+                    string material;
+                    double diopter;
+                    double price;
+                    int opticCounter = 0;
+                    string opticLine;
+                    vector<Optic> optics;
+                    while ( getline (myfile,opticLine) ){
+                        if(opticLine == "<--"){
+                            // add optics to provdires
+                            if(optics.size() > 0){
+                                providers[providers.size()-1].setOptics(optics);
+                            }
+                            break;
+                        }
+                        if(opticCounter == 0){
+                            opticType = opticLine;
+                            opticCounter++;
+                        } else if(opticCounter == 1){
+                            thickness = opticLine;
+                            opticCounter++;
+                        } else if(opticCounter == 2){
+                            material = opticLine;
+                            opticCounter++;
+                        } else if(opticCounter == 3){
+                            diopter = stod(opticLine);
+                            opticCounter++;
+                        } else if(opticCounter == 4){
+                            price = stod(opticLine);
+                            Optic newOptic(opticType,thickness,material,diopter,price);
+                            optics.push_back(newOptic);
+                            opticCounter = 0;
+                        } else {
+                            cout << "error" << endl;
+                        }
+                    }
+                }
+                providerFieldCounter = 0;
+            }
+        }
+        myfile.close();
+        return providers;
+    } else{
+        cout << "Unable to open file";
+        return providers;
+    }
+}
 void FileIO::saveProviders(vector<Provider> providers){
     ofstream outputStream;
     outputStream.open(path);
@@ -207,6 +298,7 @@ public:
     void addProvider(Provider);
     void saveToFile();
     void showProviders();
+    void loadProviders();
 };
 
 
@@ -232,11 +324,15 @@ void AppController::showProviders(){
 void AppController::saveToFile(){
     file.saveProviders(providers);
 }
+void AppController::loadProviders(){
+    providers = file.loadProviders();
+}
 void showMenu(){
     cout << "0. Exit." << endl;
     cout << "1. Add Provider." << endl;
     cout << "2. Show providers." << endl;
     cout << "3. Save to File." << endl;
+    cout << "4. Load from File." << endl;
 }
 int main()
 {
@@ -289,6 +385,11 @@ int main()
             cout << endl;
             app.saveToFile();
             cout << "Save complete" << endl;
+        } else if(choise == 4){
+            cout << "--> Load from File" << endl;
+            cout << endl;
+            app.loadProviders();
+            cout << "Load complete" << endl;
         }else {
             break;
         }
