@@ -286,12 +286,29 @@ void FileIO::saveProviders(vector<Provider> providers){
     outputStream.close();
 }
 
+void showMenu(){
+    cout << "0. Exit." << endl;
+    cout << "1. Add provider." << endl;
+    cout << "2. Show providers." << endl;
+    cout << "3. Save to File." << endl;
+    cout << "4. Load from File." << endl;
+    cout << "5. Add new optic to current provider." << endl;
+    cout << "6. Calculate the price for a number of optics from a provider." << endl;
+}
+void continueMenu(){
+    cout << "0. Exit." << endl;
+    cout << "1. Processed." << endl;
+}
+
 class AppController{
 private:
     OpticFactory opticFactory;
     ProviderFactory providerFactory;
     FileIO file;
     vector<Provider> providers;
+    bool isThereSomethingLeft(int*, int);
+    Provider* choseProvider();
+    void chooseOptics(vector<Optic> currentOptics);
 public:
     AppController(ProviderFactory, OpticFactory, FileIO);
     void addProvider();
@@ -300,6 +317,7 @@ public:
     void showProviders();
     void loadProviders();
     void addOpticToCurrentProvider();
+    void calculatePriceForChoisenOptics();
 };
 
 
@@ -330,35 +348,119 @@ void AppController::loadProviders(){
     providers = file.loadProviders();
 }
 void AppController::addOpticToCurrentProvider(){
-    // not ready
     if(providers.size() == 0){
         cout << "There are no providers" << endl;
         return;
     }
-    cout << "--> Add new Optic." << endl;
-    cout << "----> Chose a provider number:" << endl;
+    Provider* currentProvider = choseProvider();
+    if(currentProvider == NULL){
+      cout << "No Provider" << endl;
+      int temp;
+      cout << "Enter 1 and press Enter." << endl;
+      cin >> temp;
+      return;
+    }
+    Optic newOptic = opticFactory.createOptic();
+    currentProvider->addOptic(newOptic);
+
+
+    cout << "Operation complete." << endl;
+}
+bool AppController::isThereSomethingLeft(int* choisenOptics, int len){
+    for(int i = 0; i < len; i++){
+        if(choisenOptics[i] == 0){
+            return true;
+        }
+    }
+    return false;
+}
+Provider* AppController::choseProvider(){
+     if(providers.size() == 0){
+        cout << "There are no providers" << endl;
+        return NULL;
+    }
+    cout << "--> Please choose a provider number:" << endl;
     showProviders();
+    cout << "--> Please choose a provider number:" << endl;
     int choise = -1;
     cin >> choise;
     while(choise < 0 || choise >= (int)providers.size()){
         cout << "Please choose a valid provider number!" << endl;
         cin >> choise;
     }
-    Optic newOptic = opticFactory.createOptic();
-    providers[choise].addOptic(newOptic);
-    cout << "Operation complete." << endl;
+    return &providers[choise];
 }
-void showMenu(){
-    cout << "0. Exit." << endl;
-    cout << "1. Add provider." << endl;
-    cout << "2. Show providers." << endl;
-    cout << "3. Save to File." << endl;
-    cout << "4. Load from File." << endl;
-    cout << "5. Add new optic to current provider." << endl;
+void AppController::chooseOptics(vector<Optic> currentOptics){
+
+    if(currentOptics.size()==0){
+        cout << "This provider has no optics" << endl;
+        return;
+    }
+    int opticsSize = currentOptics.size();
+    int choisenOptics[opticsSize];
+    for(int i = 0; i < opticsSize; i++){
+        choisenOptics[i] = 0;
+    }
+
+    cout << "This are the optics for the chosen provider:" << endl;
+
+    int stillBying = 1;
+    double currentSum = 0;
+    while (stillBying == 1 && isThereSomethingLeft(choisenOptics,opticsSize)){
+        cout << "Please choose one of the following optics." << endl;
+        for(int i = 0; i < opticsSize; i++){
+            if(choisenOptics[i] == 1){
+                continue;
+            } else {
+                cout << "Optic " << i << ":" << endl;
+                currentOptics[i].showData();
+                cout << endl;
+            }
+        }
+        int currentOptic = -1;
+        cout << "Please choose an optic." << endl;
+        cin >> currentOptic;
+        while (currentOptic < 0 && currentOptic >= opticsSize && choisenOptics[currentOptic] == 1){
+            cout << "Please choose valid optic" << endl;
+            cin >> currentOptic;
+        }
+        currentSum += currentOptics[currentOptic].getPrice();
+        choisenOptics[currentOptic] = 1;
+        cout << "Chosen Optics: " << endl;
+
+        for(int i = 0; i < opticsSize; i++){
+            if(choisenOptics[i] == 0){
+                continue;
+            } else {
+                cout << "Optic " << i << ":" << endl;
+                currentOptics[i].showData();
+                cout << endl;
+            }
+        }
+        if(!isThereSomethingLeft(choisenOptics,opticsSize)){
+            cout << "There a no more optics to chose" << endl;
+            cout << "Total price: " << currentSum << endl;
+            cout << "Enter 1 and press Enter to return to main menu." << endl;
+            cin >> stillBying;
+            return;
+        }
+        cout << "Total price: " << currentSum << endl;
+        cout << "Do you want to buy another Optic from this provider?" << endl;
+        continueMenu();
+        cin >> stillBying;
+    }
 }
-void continueMenu(){
-    cout << "0. Exit." << endl;
-    cout << "1. Continue." << endl;
+void AppController::calculatePriceForChoisenOptics(){
+    Provider* provider = choseProvider();
+    if(provider == NULL){
+        cout << "There are no providers" << endl;
+        int temp;
+        cout << "Enter 1 and press Enter." << endl;
+        cin >> temp;
+        return;
+    }
+    vector<Optic> currentOptics = provider->getOptics();
+    chooseOptics(currentOptics);
 }
 int main()
 {
@@ -415,6 +517,8 @@ int main()
             cout << "Load complete" << endl;
         } else if(choise == 5){
             app.addOpticToCurrentProvider();
+        } else if(choise == 6){
+            app.calculatePriceForChoisenOptics();
         }else {
             break;
         }
