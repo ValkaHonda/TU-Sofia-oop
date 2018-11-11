@@ -9,19 +9,24 @@ using namespace std;
 class Optic{
 private:
     string opticType;
-    string thickness;
+    double thickness;
     string material;
     double diopter;
     double price;
 public:
     Optic();
-    Optic(string,string,string,double ,double);
+    Optic(string,double,string,double ,double);
     string getData() const;
     string getOpticType();
-    string getThickness();
+    double getThickness();
     string getMaterial();
     double getDiopter();
     double getPrice();
+    void setOpticType(string);
+    void setThickness(double);
+    void setMaterial(string);
+    void setDiopter(double);
+    void setPrice(double);
     string toFileLineString();
     friend ostream& operator<<(ostream&, const Optic&);
 };
@@ -35,17 +40,32 @@ ostream& operator<<(ostream& os, const Optic& optic){
     return os;
 }
 Optic::Optic(){}
-Optic::Optic(string opticType,string thickness,string material,double diopter,double price){
+Optic::Optic(string opticType,double thickness,string material,double diopter,double price){
         this->opticType = opticType;
         this->thickness = thickness;
         this->material = material;
         this->diopter = diopter;
         this->price = price;
 }
+void Optic::setOpticType(string opticType){
+    this->opticType = opticType;
+}
+void Optic::setThickness(double thickness){
+    this->thickness = thickness;
+}
+void Optic::setMaterial(string material){
+    this->material = material;
+}
+void Optic::setDiopter(double diopter){
+    this->diopter = diopter;
+}
+void Optic::setPrice(double price){
+    this->price = price;
+}
 string Optic::getOpticType(){
     return opticType;
 }
-string Optic::getThickness(){
+double Optic::getThickness(){
     return thickness;
 }
 string Optic::getMaterial(){
@@ -89,7 +109,7 @@ Optic OpticFactory::createOptic(){
         cout << "Enter the type of Optic" << endl;
         cin >> opticType;
 
-        string thickness;
+        double thickness;
         cout << "Enter the thickness of Optic" << endl;
         cin >> thickness;
 
@@ -119,18 +139,22 @@ private:
 public:
     Provider();
     Provider(string,string,string ,string ,string);
-    string getFName() const;
     string showOptics() const;
-
     void addOptic(Optic newOptic);
     vector<Optic> getOptics();
     string toFileLineString();
     void setOptics(vector<Optic>);
     friend ostream& operator<<(ostream&, const Optic&);
+    string getFName() const;
     string getLName() const;
     string getBulstat() const;
     string getPhone() const;
     string getAddress() const;
+    void setFName(string);
+    void setLName(string);
+    void setBulstat(string);
+    void setPhone(string);
+    void setAddress(string);
 };
 string Provider::getFName() const{
     return fName;
@@ -172,6 +196,21 @@ Provider::Provider(string bulstat,string fName,string lName,string phone,string 
     this->fName = fName;
     this->lName = lName;
     this->phone = phone;
+    this->address = address;
+}
+void Provider::setFName(string fName){
+    this->fName = fName;
+}
+void Provider::setLName(string lName){
+    this->lName = lName;
+}
+void Provider::setBulstat(string bulstat){
+    this->bulstat = bulstat;
+}
+void Provider::setPhone(string phone){
+    this->phone = phone;
+}
+void Provider::setAddress(string address){
     this->address = address;
 }
 string Provider::showOptics() const{
@@ -281,7 +320,7 @@ vector<Provider> FileIO::loadProviders(){
             }else {
                 if(line == "-->"){
                     string opticType;
-                    string thickness;
+                    double thickness;
                     string material;
                     double diopter;
                     double price;
@@ -300,7 +339,7 @@ vector<Provider> FileIO::loadProviders(){
                             opticType = opticLine;
                             opticCounter++;
                         } else if(opticCounter == 1){
-                            thickness = opticLine;
+                            thickness = stod(opticLine);
                             opticCounter++;
                         } else if(opticCounter == 2){
                             material = opticLine;
@@ -530,11 +569,11 @@ int main()
     Provider p2("bulstat2","fName2","lName2","phone2","address2");
     Provider p3("bulstat3","fName3","lName3","phone3","address3");
 
-    Optic o1("pticType","thickness","material",0.5,10);
-    Optic o2("pticType2","thickness2","material2",1,20);
-    Optic o3("pticType3","thickness3","material3",2,30);
-    Optic o4("pticType4","thickness4","material4",3,40);
-    Optic o5("pticType5","thickness5","material5",4,50);
+    Optic o1("pticType",0.1,"material",0.5,10);
+    Optic o2("pticType2",0.2,"material2",1,20);
+    Optic o3("pticType3",0.3,"material3",2,30);
+    Optic o4("pticType4",0.4,"material4",3,40);
+    Optic o5("pticType5",0.5,"material5",4,50);
 
     p1.addOptic(o1);
     p1.addOptic(o2);
