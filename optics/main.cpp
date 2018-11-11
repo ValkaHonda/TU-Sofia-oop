@@ -299,6 +299,7 @@ public:
     void saveToFile();
     void showProviders();
     void loadProviders();
+    void addOpticToCurrentProvider();
 };
 
 
@@ -318,6 +319,7 @@ void AppController::addProvider(Provider provider){
 }
 void AppController::showProviders(){
     for(unsigned int i = 0; i < providers.size(); i++){
+        cout << "Provider " << i << ":"<< endl;
         providers[i].showData();
     }
 }
@@ -327,12 +329,36 @@ void AppController::saveToFile(){
 void AppController::loadProviders(){
     providers = file.loadProviders();
 }
+void AppController::addOpticToCurrentProvider(){
+    // not ready
+    if(providers.size() == 0){
+        cout << "There are no providers" << endl;
+        return;
+    }
+    cout << "--> Add new Optic." << endl;
+    cout << "----> Chose a provider number:" << endl;
+    showProviders();
+    int choise = -1;
+    cin >> choise;
+    while(choise < 0 || choise >= (int)providers.size()){
+        cout << "Please choose a valid provider number!" << endl;
+        cin >> choise;
+    }
+    Optic newOptic = opticFactory.createOptic();
+    providers[choise].addOptic(newOptic);
+    cout << "Operation complete." << endl;
+}
 void showMenu(){
     cout << "0. Exit." << endl;
-    cout << "1. Add Provider." << endl;
+    cout << "1. Add provider." << endl;
     cout << "2. Show providers." << endl;
     cout << "3. Save to File." << endl;
     cout << "4. Load from File." << endl;
+    cout << "5. Add new optic to current provider." << endl;
+}
+void continueMenu(){
+    cout << "0. Exit." << endl;
+    cout << "1. Continue." << endl;
 }
 int main()
 {
@@ -365,9 +391,6 @@ int main()
     app.addProvider(p2);
     app.addProvider(p3);
 
-
-    //testting save to file
-
     int choise = -1;
     showMenu();
     cin >> choise;
@@ -390,11 +413,23 @@ int main()
             cout << endl;
             app.loadProviders();
             cout << "Load complete" << endl;
+        } else if(choise == 5){
+            app.addOpticToCurrentProvider();
         }else {
             break;
         }
-        showMenu();
-        cin >> choise;
+
+        int continueChoise = 0;
+        continueMenu();
+        cin >> continueChoise;
+        if(continueChoise == 0){
+            break;
+        } else {
+            system("cls");
+            showMenu();
+            cin >> choise;
+        }
+
     }
 
     cout << "Thank you for using us" << endl;
