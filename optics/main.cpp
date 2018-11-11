@@ -16,10 +16,24 @@ private:
 public:
     Optic();
     Optic(string,string,string,double ,double);
-    void showData();
+    string getData() const;
+    string getOpticType();
+    string getThickness();
+    string getMaterial();
+    double getDiopter();
     double getPrice();
     string toFileLineString();
+    friend ostream& operator<<(ostream&, const Optic&);
 };
+
+ostream& operator<<(ostream& os, const Optic& optic){
+    os << '\t' << "Optic type: " << optic.opticType << endl;
+    os << '\t' << "thickness: " << optic.thickness<< endl;
+    os << '\t' << "material: " << optic.material << endl;
+    os << '\t' << "diopter: " << optic.diopter << endl;
+    os << '\t' << "price: " << optic.price << endl;
+    return os;
+}
 Optic::Optic(){}
 Optic::Optic(string opticType,string thickness,string material,double diopter,double price){
         this->opticType = opticType;
@@ -28,12 +42,26 @@ Optic::Optic(string opticType,string thickness,string material,double diopter,do
         this->diopter = diopter;
         this->price = price;
 }
-void Optic::showData(){
-    cout << '\t' << "Optic type: " << opticType << endl;
-    cout << '\t' << "thickness: " << thickness<< endl;
-    cout << '\t' << "material: " << material << endl;
-    cout << '\t' << "diopter: " << diopter << endl;
-    cout << '\t' << "price: " << price << endl;
+string Optic::getOpticType(){
+    return opticType;
+}
+string Optic::getThickness(){
+    return thickness;
+}
+string Optic::getMaterial(){
+    return material;
+}
+double Optic::getDiopter(){
+    return diopter;
+}
+string Optic::getData() const{
+    stringstream ss;
+    ss << '\t' << "Optic type: " << opticType << endl;
+    ss << '\t' << "thickness: " << thickness<< endl;
+    ss << '\t' << "material: " << material << endl;
+    ss << '\t' << "diopter: " << diopter << endl;
+    ss << '\t' << "price: " << price << endl;
+    return ss.str();
 }
 string Optic::toFileLineString(){
     std::stringstream ss;
@@ -91,13 +119,33 @@ private:
 public:
     Provider();
     Provider(string,string,string ,string ,string);
-    void showOptics();
-    void showData();
+    string getFName() const;
+    string showOptics() const;
+
     void addOptic(Optic newOptic);
     vector<Optic> getOptics();
     string toFileLineString();
     void setOptics(vector<Optic>);
+    friend ostream& operator<<(ostream&, const Optic&);
+    string getLName() const;
+    string getBulstat() const;
+    string getPhone() const;
+    string getAddress() const;
 };
+string Provider::getFName() const{
+    return fName;
+}
+ostream& operator<<(ostream& os, const Provider& provider){
+    os << "First name: " << provider.getFName() << endl;
+
+    os << "Last name: " << provider.getLName() << endl;
+    os << "Bulstat: " << provider.getBulstat() << endl;
+    os << "Phone: " << provider.getPhone() << endl;
+    os << "Address: " << provider.getAddress() << endl;
+    os << "Optics:" << endl;
+    os << provider.showOptics();
+    return os;
+}
 void Provider::setOptics(vector<Optic> optics){
     this->optics = optics;
 }
@@ -126,22 +174,27 @@ Provider::Provider(string bulstat,string fName,string lName,string phone,string 
     this->phone = phone;
     this->address = address;
 }
-void Provider::showOptics(){
+string Provider::showOptics() const{
+    stringstream ss;
     for(unsigned int i = 0; i < optics.size(); i++){
-        cout << i << "." << endl;
-        optics[i].showData();
-        cout << endl;
+        ss << i << "." << endl;
+        ss << optics[i].getData() << endl;
     }
+    return ss.str();
 }
-void Provider::showData(){
-    cout << "First name: " << this->fName << endl;
-    cout << "Last name: " << this->lName << endl;
-    cout << "Bulstat: " << this->bulstat << endl;
-    cout << "Phone: " << this->phone << endl;
-    cout << "Address: " << this->address << endl;
-    cout << "Optics:" << endl;
-    showOptics();
+string Provider::getLName() const{
+    return lName;
+ }
+string Provider::getBulstat() const{
+    return bulstat;
 }
+string Provider::getPhone() const{
+    return phone;
+}
+string Provider::getAddress() const{
+    return address;
+}
+
 void Provider::addOptic(Optic newOptic){
     this->optics.push_back(newOptic);
 }
@@ -338,7 +391,7 @@ void AppController::addProvider(Provider provider){
 void AppController::showProviders(){
     for(unsigned int i = 0; i < providers.size(); i++){
         cout << "Provider " << i << ":"<< endl;
-        providers[i].showData();
+        cout << providers[i] << endl;
     }
 }
 void AppController::saveToFile(){
@@ -413,7 +466,7 @@ void AppController::chooseOptics(vector<Optic> currentOptics){
                 continue;
             } else {
                 cout << "Optic " << i << ":" << endl;
-                currentOptics[i].showData();
+                currentOptics[i].getData();
                 cout << endl;
             }
         }
@@ -433,7 +486,7 @@ void AppController::chooseOptics(vector<Optic> currentOptics){
                 continue;
             } else {
                 cout << "Optic " << i << ":" << endl;
-                currentOptics[i].showData();
+                currentOptics[i].getData();
                 cout << endl;
             }
         }
@@ -535,7 +588,6 @@ int main()
         }
 
     }
-
     cout << "Thank you for using us" << endl;
     return 0;
 }
