@@ -95,17 +95,16 @@ void CreditAccount::outputMoney(double money){
 int main()
 {
     cout << "Hello world!" << endl;
-    vector<AbstractAccount> arr;
+    vector<AbstractAccount*> arr;
     DepositAccount account1("Lenny", 80, 10);
     DepositAccount account2("Lenny", 600, 10);
     DepositAccount account3("Elly", 200, 10);
     CreditAccount account4("Lenny", 80, 10);
 
-    arr.push_back(account1);
-  /*  arr.push_back(account2);
-    arr.push_back(account3);
-    arr.push_back(account4);
-*/
+    arr.push_back(&account1);
+    arr.push_back(&account2);
+    arr.push_back(&account3);
+    arr.push_back(&account4);
 
     return 0;
 }
