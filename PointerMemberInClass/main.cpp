@@ -15,7 +15,7 @@ private:
     int year;
 public:
    Animal(char*, int);
-   ///Animal(const Animal &);
+   Animal(const Animal &);
     Animal(){}
     ~Animal();
     void printName();
@@ -30,6 +30,16 @@ void Animal::printName(){
 Animal::~Animal(){
     cout<<"The memory is freed"<<endl;
     delete []name;
+}
+
+Animal(const Animal &obj){
+    ///Step 1:
+    int nameSize = strlen(obj.name);
+    ///Step 2:
+    this -> name = new char[nameSize];
+    ///Step 3:
+    strcpy(this ->name, obj.name);
+    this -> age = age;
 }
 
 Animal::Animal(char* name, int year){
