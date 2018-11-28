@@ -48,31 +48,34 @@ void compareCakes(Cake firstCake, Cake secondCake)
 {cout << firstCake.name << endl;} else {cout << secondCake.name << endl;}
 }
 
-class Person;
-
-class Bag
-{
-private: double price;
-public: Bag(){}; ~Bag();
-        Bag(double);
-        friend void Person::printBackPack(Bag bag);
-};
-
-Bag::Bag(double price) {this->price = price;}
-Bag::~Bag() {cout <<"Bag destroyed!"<< endl;}
+class Bag;
 
 class Person
 {
 private: string name;
 public: Person(){}; ~Person();
         Person(string);
-void printBackPack(Bag bag);
+void printBackPack(Bag);
 };
 
 Person::Person(string name) {this->name = name;}
 Person::~Person() {cout <<"Person killed!"<< endl;}
+/*void Person::printBackPack(const Bag& bag)
+{cout << bag.price << endl;}*/
+
+class Bag
+{
+private: double price;
+public: Bag(){}; ~Bag();
+        Bag(double);
+        friend void Person::printBackPack(Bag);
+};
 void Person::printBackPack(Bag bag)
 {cout << bag.price << endl;}
+
+Bag::Bag(double price) {this->price = price;}
+Bag::~Bag() {cout <<"Bag destroyed!"<< endl;}
+
 
 
 int main()
