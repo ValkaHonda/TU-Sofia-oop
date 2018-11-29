@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string.h>
+#include <vector>
+
 using namespace std;
 class Author
 {
@@ -7,7 +9,8 @@ private: char* name; int birthYear;
 public: Author(){}; ~Author();
         Author(char*, int);
         Author(const Author&);
-void printName();
+        void printName();
+        int getYear();
 };
 Author::Author(char* name, int birthYear)
 {
@@ -36,6 +39,10 @@ for (int i = 0; i < 4; i++)
  cout << endl;
 }
 
+int Author::getYear(){
+    return birthYear;
+}
+
 class Comicbook
 {
 private: string title; Author author;
@@ -46,6 +53,8 @@ private: string title; Author author;
 public: Comicbook(){}; ~Comicbook(){};
         Comicbook(string, Author, double);
         int getNumber() {return number;}
+        friend bool compare(Comicbook, Comicbook);
+        Author getAuthor();
 };
 
 Comicbook::Comicbook(string title, Author author, double price)
@@ -56,18 +65,30 @@ this->number = count; count++;
 
 int Comicbook::count = 1;
 
+bool compare(Comicbook comic1, Comicbook comic2){
+    if(comic1.price < comic2.price){
+        return true;
+    }
+    return false;
+}
+
+Author Comicbook::getAuthor(){
+    return author;
+}
 
 int main()
 {
-    Author firstAuthor("Meh", 2000);
+    Author firstAuthor("Meh\0", 2009);
+    Author secondAuthor("Eh\0", 2010);
+    Author thirdAuthor("M\0", 2000);
     Comicbook firstComic("Title1", firstAuthor, 10);
-    Comicbook secondComic("Title2", firstAuthor, 15);
-    Comicbook thirdComic("Title2", firstAuthor, 15);
-    Comicbook fourthComic("Title2", firstAuthor, 15);
+    Comicbook secondComic("Title2", secondAuthor, 15);
+    Comicbook thirdComic("Title2", thirdAuthor, 15);
+
     cout << firstComic.getNumber() << endl;
     cout << secondComic.getNumber() << endl;
     cout << thirdComic.getNumber() << endl;
-    cout << fourthComic.getNumber() << endl;
+
     /*
     char* name = new char[5];
     name[0] = 'h';
@@ -86,7 +107,25 @@ int main()
     name[4] = '/0';
 
     firstAuthor.printName();
-    */
 
+*/
+    vector<Comicbook> arr;
+    arr.push_back(firstComic);
+    arr.push_back(secondComic);
+    arr.push_back(thirdComic);
+
+    for(int i = 0; i < arr.size() - 1; i++){
+        for(int j = 0; j < arr.size() - i - 1; j++){
+            if(arr[j].getAuthor().getYear() > arr[j + 1].getAuthor().getYear()){
+                Comicbook temp;
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = arr[j];
+            }
+        }
+    }
+    cout<<"result "<<endl;
+
+    cout<<arr[0].getNumber()<<endl;
     return 0;
 }
