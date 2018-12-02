@@ -26,6 +26,7 @@ MusicalInstrument::MusicalInstrument(string name, int year, string type)
 
 MusicalInstrument::~MusicalInstrument() {cout <<"Instrument destroyed."<< endl;}
 ///Това не знам дали се пише, няма много смисъл от него, тъй като се предефинира:
+///-> Ако класът е абстрактен и този метод е абстрактен, НЕ се пише тяло!!!
 /*
 void MusicalInstrument::printInfo()
 {cout<<"Info: "<< name <<", "<< year <<", "<< type <<"."<< endl;}
